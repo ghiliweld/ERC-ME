@@ -64,6 +64,8 @@ contract ERCME is MyNonFungibleToken {
         for (uint i = 1; i <= increase; i++) {
             profiles[initiatorId].followings++;
             profiles[targetId].followers++;
+            profileIndexToFollowers[targetId].push(initiatorId);
+            profileIndexToFollowings[initiatorId].push(targetId);
             NewFollow(initiatorId, targetId);
         }
     }
@@ -80,6 +82,10 @@ contract ERCME is MyNonFungibleToken {
         for (uint i = 1; i <= decrease; i++) {
             profiles[initiatorId].followings--;
             profiles[targetId].followers--;
+            // .pop() is not available on solidity
+            // How do I circumvent this?
+            profileIndexToFollowers[targetId].pop(initiatorId);
+            profileIndexToFollowings[initiatorId].pop(targetId);
             NewUnfollow(initiatorId, targetId);
         }
     }

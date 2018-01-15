@@ -14,6 +14,8 @@ contract MyNonFungibleToken is ERC721 {
         string handle; // Must be unique
         uint32 followers;
         uint32 followings;
+        mapping (uint256 => uint[]) public profileIndexToFollowers; // Tracks who follows a certain profileId
+        mapping (uint256 => uint[]) public profileIndexToFollowings; // Tracks who a certain profileId follows
         address ownedBy;
         uint64 bornOn;
     }
