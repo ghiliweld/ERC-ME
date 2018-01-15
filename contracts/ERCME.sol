@@ -52,42 +52,42 @@ contract ERCME is MyNonFungibleToken {
         _mint(msg.sender, name, handle);
     }
 
-    function newFollow(uint followIncrease, uint256 initiatorId, uint256 targetId) external {
+    function newFollow(uint256 initiatorId, uint256 targetId) external {
         /* Triggered when somebody follows another person
         followIncrease is used when deferred updating is enabled
-        A following is added to the initiator and a follower is added to the target
-        ** Needs to be further optimized for gas efficiency
-        A for loop is necessary if you want each NewFollow event to be triggered for a new following */
+        A following is added to the initiator and a follower is added to the target */
 
         require(_owns(msg.sender, initiatorId));
-        uint increase = followIncrease;
-        for (uint i = 1; i <= increase; i++) {
-            profiles[initiatorId].followings++;
-            profiles[targetId].followers++;
-            profileIndexToFollowers[targetId].push(initiatorId);
-            profileIndexToFollowings[initiatorId].push(targetId);
-            NewFollow(initiatorId, targetId);
-        }
+        require(initiatorId == targetId); // make sure we're not following ourselves
+        require(profiles[initiatorId].following.indexOf(targetId) < 0); // make sure we're not refollowing someone
+        profiles[initiatorId].following.push(targetId);
+        profiles[targetId].followers.push(initiatorId);
+        // ^^ ** Does this work?
+
+        // And now for the follower counts
+        profiles[initiatorId].followingCount = profiles[initiatorId].following.length;
+        profiles[targetId].followerCount = profiles[targetId].followers.length;
+        // ^^ ** Does this work?
+        NewFollow(initiatorId, targetId);
     }
 
-    function newUnfollow(uint followDecrease, uint256 initiatorId, uint256 targetId) external {
+    function newUnfollow(uint256 initiatorId, uint256 targetId) external {
         /* Triggered when somebody unfollows another person
-        followDecrease is used when deferred updating is enabled
-        A following is substracted from the initiator and a follower is substracted from the target
-        ** Needs to be further optimized for gas efficiency
-        A for loop is necessary if you want each NewUnfollow event to be triggered for a new unfollowing */
+        A following is substracted from the initiator and a follower is substracted from the target */
 
         require(_owns(msg.sender, initiatorId));
-        uint decrease = followDecrease;
-        for (uint i = 1; i <= decrease; i++) {
-            profiles[initiatorId].followings--;
-            profiles[targetId].followers--;
-            // .pop() is not available on solidity
-            // How do I circumvent this?
-            profileIndexToFollowers[targetId].pop(initiatorId);
-            profileIndexToFollowings[initiatorId].pop(targetId);
-            NewUnfollow(initiatorId, targetId);
-        }
+        require(initiatorId == targetId); // make sure we're not unfollowing ourselves
+        require(profiles[initiatorId].following.indexOf(targetId) >= 0);
+        // make sure we're not unfollowing someone we weren't following in the first place
+        delete profiles[initiatorId].following[profiles[initiatorId].following.indexOf(targetId)];
+        delete profiles[targetId].followers[profiles[targetId].followers.indexOf(initiatorId)];
+        // ^^ ** Does this work?
+
+        // And now for the follower counts
+        profiles[initiatorId].followingCount = profiles[initiatorId].following.length;
+        profiles[targetId].followerCount = profiles[targetId].followers.length;
+        // ^^ ** Does this work?
+        NewUnfollow(initiatorId, targetId);
     }
 
     function changeName(string newName, uint256 profileId) external {

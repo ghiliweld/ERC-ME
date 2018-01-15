@@ -12,10 +12,10 @@ contract MyNonFungibleToken is ERC721 {
     struct Profile {
         string name; // Must be unique
         string handle; // Must be unique
-        uint32 followers;
-        uint32 followings;
-        mapping (uint256 => uint[]) public profileIndexToFollowers; // Tracks who follows a certain profileId
-        mapping (uint256 => uint[]) public profileIndexToFollowings; // Tracks who a certain profileId follows
+        uint32 followerCount;
+        uint32 followingCount;
+        uint[] public followers; // Tracks who is following this profile
+        uint[] public following; // Tracks who this profile is following
         address ownedBy;
         uint64 bornOn;
     }
@@ -58,8 +58,8 @@ contract MyNonFungibleToken is ERC721 {
         Profile memory profile = Profile({
             name: _name,
             handle: _handle,
-            followers: 0,
-            followings: 0,
+            followerCount: 0,
+            followingCount: 0,
             ownedBy: _owner,
             bornOn: uint64(now)
         });
@@ -130,14 +130,16 @@ contract MyNonFungibleToken is ERC721 {
         return result;
     }
 
-    function getProfile(uint256 _profileId) external view returns (string name, string handle, uint32 followers,
-    uint32 followings, address ownedBy, uint64 bornOn) {
+    function getProfile(uint256 _profileId) external view returns (string name, string handle, uint32 followerCount,
+    uint32 followingCount, uint[] followers, uint[] following, address ownedBy, uint64 bornOn) {
 
         Profile memory profile = profiles[_profileId];
         name = profile.name;
         handle = profile.handle;
+        followerCount = profile.followerCount;
+        followingCount = profile.followingCount;
         followers = profile.followers;
-        followings = profile.followings;
+        following = profile.following;
         ownedBy = profile.ownedBy;
         bornOn = profile.bornOn;
     }
