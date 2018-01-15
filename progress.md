@@ -17,7 +17,5 @@ Ghilia Weldesselasie -- <a href='mailto:ghiliaweld@gmail.com'>ghiliaweld@gmail.c
 
 **14/01/2018**
 - I've decided that I've progressed enough on this project to move it to it's own repo (this one!).
-
-**15/01/2018**
 - I made a crucial mistake! I didn't add a way to track who follows who. Therefore, all that was being tracked was how many followers a person had but not who exactly was following them.
 - I've kinda fixed it for now but I'm still having problems with the newUnfollow method. Will fix at a later date.
