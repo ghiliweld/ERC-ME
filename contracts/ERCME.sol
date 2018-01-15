@@ -76,7 +76,7 @@ contract ERCME is MyNonFungibleToken {
         A following is substracted from the initiator and a follower is substracted from the target */
 
         require(_owns(msg.sender, initiatorId));
-        require(initiatorId == targetId); // make sure we're not unfollowing ourselves
+        require(initiatorId != targetId); // make sure we're not unfollowing ourselves
         require(profiles[initiatorId].following.indexOf(targetId) >= 0);
         // make sure we're not unfollowing someone we weren't following in the first place
         delete profiles[initiatorId].following[profiles[initiatorId].following.indexOf(targetId)];
