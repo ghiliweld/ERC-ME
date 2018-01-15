@@ -20,3 +20,6 @@ Ghilia Weldesselasie -- <a href='mailto:ghiliaweld@gmail.com'>ghiliaweld@gmail.c
 - I made a crucial mistake! I didn't add a way to track who follows who. Therefore, all that was being tracked was how many followers a person had but not who exactly was following them.
 - I've kinda fixed it for now but I'm still having problems with the newUnfollow method. Will fix at a later date.
 - 2 minutes before midnight, turns out I had a lot more to fix. I just finished doing so and hopefully there's no other bugs.
+
+**15/01/2018**
+- The fixes I made yesterday were at the loss of deferred updating but I have since then found a solution by introducing new functions called bulkFollow and bulkUnfollow.

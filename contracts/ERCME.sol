@@ -52,7 +52,7 @@ contract ERCME is MyNonFungibleToken {
         _mint(msg.sender, name, handle);
     }
 
-    function newFollow(uint256 initiatorId, uint256 targetId) external {
+    function newFollow(uint256 initiatorId, uint256 targetId) internal {
         /* Triggered when somebody follows another person
         followIncrease is used when deferred updating is enabled
         A following is added to the initiator and a follower is added to the target */
@@ -71,7 +71,7 @@ contract ERCME is MyNonFungibleToken {
         NewFollow(initiatorId, targetId);
     }
 
-    function newUnfollow(uint256 initiatorId, uint256 targetId) external {
+    function newUnfollow(uint256 initiatorId, uint256 targetId) internal {
         /* Triggered when somebody unfollows another person
         A following is substracted from the initiator and a follower is substracted from the target */
 
@@ -88,6 +88,20 @@ contract ERCME is MyNonFungibleToken {
         profiles[targetId].followerCount = profiles[targetId].followers.length;
         // ^^ ** Does this work?
         NewUnfollow(initiatorId, targetId);
+    }
+    // The 2 functions below will take care of deferred/bulk updating
+    // The bulk functions will be the ones called even in the case of a single following
+    // since newFollow/newUnfollow have been made internal.
+    function bulkFollow(uint initiatorId, uint[] multipleTargetIds) external {
+        for (uint8 i = 0; i <= multipleTargetIds.length; i++) {
+            newFollow(initiatorId, multipleTargetIds[i]);
+        }
+    }
+
+    function bulkUnfollow(uint initiatorId, uint[] multipleTargetIds) external {
+        for (uint8 i = 0; i <= multipleTargetIds.length; i++) {
+            newUnfollow(initiatorId, multipleTargetIds[i]);
+        }
     }
 
     function changeName(string newName, uint256 profileId) external {
