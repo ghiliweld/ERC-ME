@@ -23,3 +23,10 @@ Ghilia Weldesselasie -- <a href='mailto:ghiliaweld@gmail.com'>ghiliaweld@gmail.c
 
 **15/01/2018**
 - The fixes I made yesterday were at the loss of deferred updating but I have since then found a solution by introducing new functions called bulkFollow and bulkUnfollow.
+- I've added new `view` functions to return a profile's properties and new function in ERCME.sol for the new properties.
+- I've started taking suggestions via GitHub Issues. S/o to @momothereal and @CaudilloFranco.
+- I replaced `ownedBy` with `createdBy` since I figured having a property for who the owner is when we already have a mapping that does that would be redundant. Knowing who created a profile could be useful however so that's why I didn't completely erase it and changed it instead.
+- I replaced `bornOn` with `dateCreated` since that's clearer apparently.
+- At the moment I'm currently looking into adding more features like `bio` and `key`(public key) and `metadata` properties to our `Profile` struct.
+- `metadata` is lowkey a breakthrough. I hadn't considered storing string data in a mapping till @momothereal suggested it. I'm creating the functions for it right now.
+- All done for today. I think I'm finally close to future-proofing this contract.

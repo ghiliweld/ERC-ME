@@ -52,55 +52,55 @@ contract ERCME is MyNonFungibleToken {
         _mint(msg.sender, name, handle);
     }
 
-    function newFollow(uint256 initiatorId, uint256 targetId) internal {
+    function _newFollow(uint256 _initiatorId, uint256 _targetId) internal {
         /* Triggered when somebody follows another person
         followIncrease is used when deferred updating is enabled
         A following is added to the initiator and a follower is added to the target */
 
-        require(_owns(msg.sender, initiatorId));
-        require(initiatorId == targetId); // make sure we're not following ourselves
-        require(profiles[initiatorId].following.indexOf(targetId) < 0); // make sure we're not refollowing someone
-        profiles[initiatorId].following.push(targetId);
-        profiles[targetId].followers.push(initiatorId);
+        require(_owns(msg.sender, _initiatorId));
+        require(_initiatorId == _targetId); // make sure we're not following ourselves
+        require(profiles[_initiatorId].following.indexOf(_targetId) < 0); // make sure we're not refollowing someone
+        profiles[_initiatorId].following.push(_targetId);
+        profiles[_targetId].followers.push(_initiatorId);
         // ^^ ** Does this work?
 
         // And now for the follower counts
-        profiles[initiatorId].followingCount = profiles[initiatorId].following.length;
-        profiles[targetId].followerCount = profiles[targetId].followers.length;
+        profiles[_initiatorId].followingCount = profiles[_initiatorId].following.length;
+        profiles[_targetId].followerCount = profiles[_targetId].followers.length;
         // ^^ ** Does this work?
-        NewFollow(initiatorId, targetId);
+        NewFollow(_initiatorId, _targetId);
     }
 
-    function newUnfollow(uint256 initiatorId, uint256 targetId) internal {
+    function _newUnfollow(uint256 _initiatorId, uint256 _targetId) internal {
         /* Triggered when somebody unfollows another person
         A following is substracted from the initiator and a follower is substracted from the target */
 
-        require(_owns(msg.sender, initiatorId));
-        require(initiatorId != targetId); // make sure we're not unfollowing ourselves
-        require(profiles[initiatorId].following.indexOf(targetId) >= 0);
+        require(_owns(msg.sender, _initiatorId));
+        require(_initiatorId != _targetId); // make sure we're not unfollowing ourselves
+        require(profiles[_initiatorId].following.indexOf(_targetId) >= 0);
         // make sure we're not unfollowing someone we weren't following in the first place
-        delete profiles[initiatorId].following[profiles[initiatorId].following.indexOf(targetId)];
-        delete profiles[targetId].followers[profiles[targetId].followers.indexOf(initiatorId)];
+        delete profiles[_initiatorId].following[profiles[_initiatorId].following.indexOf(_targetId)];
+        delete profiles[_targetId].followers[profiles[_targetId].followers.indexOf(_initiatorId)];
         // ^^ ** Does this work?
 
         // And now for the follower counts
-        profiles[initiatorId].followingCount = profiles[initiatorId].following.length;
-        profiles[targetId].followerCount = profiles[targetId].followers.length;
+        profiles[_initiatorId].followingCount = profiles[_initiatorId].following.length;
+        profiles[_targetId].followerCount = profiles[_targetId].followers.length;
         // ^^ ** Does this work?
-        NewUnfollow(initiatorId, targetId);
+        NewUnfollow(_initiatorId, _targetId);
     }
     // The 2 functions below will take care of deferred/bulk updating
     // The bulk functions will be the ones called even in the case of a single following
     // since newFollow/newUnfollow have been made internal.
     function bulkFollow(uint initiatorId, uint[] multipleTargetIds) external {
         for (uint8 i = 0; i <= multipleTargetIds.length; i++) {
-            newFollow(initiatorId, multipleTargetIds[i]);
+            _newFollow(initiatorId, multipleTargetIds[i]);
         }
     }
 
     function bulkUnfollow(uint initiatorId, uint[] multipleTargetIds) external {
         for (uint8 i = 0; i <= multipleTargetIds.length; i++) {
-            newUnfollow(initiatorId, multipleTargetIds[i]);
+            _newUnfollow(initiatorId, multipleTargetIds[i]);
         }
     }
 
@@ -116,6 +116,47 @@ contract ERCME is MyNonFungibleToken {
         require(_checkUniqueHandle(newHandle));
         profiles[profileId].handle = newHandle;
         HandleChange(profileId, newHandle);
+    }
+
+    function editBio(string newBio, uint256 profileId) external {
+        require(_owns(msg.sender, profileId));
+        profiles[profileId].bio = newBio;
+    }
+
+    function changeKey(string newKey, uint256 profileId) external {
+        require(_owns(msg.sender, profileId));
+        profiles[profileId].key = newKey;
+    }
+
+    function editMetadata(string metaKey, string metaValue, uint256 profileId, string namespace) external {
+        require(_owns(msg.sender, profileId));
+        // The code below works for both editing an existing key/value pair
+        // and for creating a new pair as well
+        // namespace is the app from which this metadata comes from. Ex: Social Dapp
+        // ** Do default parameters work in Solidity?
+        // metaKey is the key (a string) we will be looking up. Ex: website
+        //metaValue is the value that search will return. Ex: https://ghiliweld.github.io
+        // profiles[profileId].metadata["Social Dapp:website"] = "https://ghiliweld.github.io"
+        profiles[profileId].metadata[namespace + ":" + metaKey] = metaValue;
+    }
+    // editGlobalMetadata and removeGlobalMetadata are subject to removal
+    /* I'm deciding between makings seperate functions for global metadata or
+    making global a standard the in the docs specification unless the Dapp needs to be specified.*/
+    function editGlobalMetadata(string metaKey, string metaValue, uint256 profileId) external {
+        require(_owns(msg.sender, profileId));
+        profiles[profileId].metadata["global:" + metaKey] = metaValue;
+    }
+
+    function removeMetadata(string metaKey, uint256 profileId, string namespace) external {
+        require(_owns(msg.sender, profileId));
+        // The code below will delete a key/value pair from the metadata mapping
+        delete profiles[profileId].metadata[namespace + ":" + metaKey];
+        // ^^ ** Does delete work like this?
+    }
+
+    function removeGlobalMetadata(string metaKey, uint256 profileId) external {
+        require(_owns(msg.sender, profileId));
+        delete profiles[profileId].metadata["global:" + metaKey];
     }
 
 }

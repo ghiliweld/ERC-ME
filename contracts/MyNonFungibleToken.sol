@@ -12,12 +12,15 @@ contract MyNonFungibleToken is ERC721 {
     struct Profile {
         string name; // Must be unique
         string handle; // Must be unique
+        string bio;
+        string key; // stores a public key for our profile, still looking into it
+        mapping (string => string) public metadata;
         uint32 followerCount;
         uint32 followingCount;
         uint[] public followers; // Tracks who is following this profile
         uint[] public following; // Tracks who this profile is following
-        address ownedBy;
-        uint64 bornOn;
+        address createdBy;
+        uint64 dateCreated;
     }
 
     Profile[] public profiles;
@@ -54,20 +57,20 @@ contract MyNonFungibleToken is ERC721 {
         TransferEvent(_from, _to, _profileId);
     }
 
-    function _mint(address _owner, string _name, string _handle) internal returns (uint256 profileId) {
+    function _mint(address _creator, string _name, string _handle) internal returns (uint256 profileId) {
         Profile memory profile = Profile({
             name: _name,
             handle: _handle,
             followerCount: 0,
             followingCount: 0,
-            ownedBy: _owner,
-            bornOn: uint64(now)
+            createdBy: _creator,
+            dateCreated: uint64(now)
         });
         profileId = profiles.push(profile) - 1;
 
-        NewProfile(_owner, profileId);
+        NewProfile(_creator, profileId);
 
-        _transfer(0, _owner, profileId);
+        _transfer(0, _creator, profileId);
     }
 
 
@@ -130,17 +133,99 @@ contract MyNonFungibleToken is ERC721 {
         return result;
     }
 
-    function getProfile(uint256 _profileId) external view returns (string name, string handle, uint32 followerCount,
-    uint32 followingCount, uint[] followers, uint[] following, address ownedBy, uint64 bornOn) {
+    function getProfile(uint256 _profileId) external view returns (string name, string handle, string bio, string key,
+        mapping metadata, uint32 followerCount, uint32 followingCount, uint[] followers,
+        uint[] following, address createdBy, uint64 dateCreated) {
+        // ^^ ** Is that how you return a mapping type?
 
         Profile memory profile = profiles[_profileId];
         name = profile.name;
         handle = profile.handle;
+        bio = profile.bio;
+        key = profile.key
+        metadata = profile.metadata;
         followerCount = profile.followerCount;
         followingCount = profile.followingCount;
         followers = profile.followers;
         following = profile.following;
-        ownedBy = profile.ownedBy;
-        bornOn = profile.bornOn;
+        createdBy = profile.createdBy;
+        dateCreated = profile.dateCreated;
+    }
+
+    function getProfileName(uint256 _profileId) external view returns (string name) {
+
+        Profile memory profile = profiles[_profileId];
+        name = profile.name;
+    }
+
+    function getProfileHandle(uint256 _profileId) external view returns (string handle) {
+
+        Profile memory profile = profiles[_profileId];
+        handle = profile.handle;
+    }
+
+    function getProfileBio(uint256 _profileId) external view returns (string bio) {
+
+        Profile memory profile = profiles[_profileId];
+        bio = profile.bio;
+    }
+
+    function getAllProfileMetadata(uint256 _profileId) external view returns (mapping metadata) {
+        //^^ ** Is that how you return a mapping type ?
+        // returns the whole mapping
+        Profile memory profile = profiles[_profileId];
+        metadata = profile.metadata;
+    }
+
+    function getSpecificProfileMetadata(uint256 _profileId, string metaKey, string namespace) external view
+    returns (string metaValue) {
+        //^^ ** Is that how you return a mapping type ?
+        // returns a specific element in the map
+        // metaKey is the key (a string) we will be looking up. Ex: website
+        //metaValue is the value that search will return. Ex: https://ghiliweld.github.io
+        Profile memory profile = profiles[_profileId];
+        metaValue = profile.metadata[namespace + ":" + metaKey];
+    }
+
+    function getProfileKey(uint256 _profileId) external view returns (string key) {
+
+        Profile memory profile = profiles[_profileId];
+        key = profile.key;
+    }
+
+    function getProfileFollowers(uint256 _profileId) external view returns (uint[] followers) {
+
+        Profile memory profile = profiles[_profileId];
+        followers = profile.followers;
+    }
+
+    function getProfileFollowerCount(uint256 _profileId) external view returns (uint32 followerCount) {
+
+        Profile memory profile = profiles[_profileId];
+        followerCount = profile.followerCount;
+    }
+
+    function getProfileFollowings(uint256 _profileId) external view returns (uint[] following) {
+
+        Profile memory profile = profiles[_profileId];
+        following = profile.following;
+    }
+
+    function getProfileFollowingCount(uint256 _profileId) external view returns (uint32 followingCount) {
+
+        Profile memory profile = profiles[_profileId];
+        followingCount = profile.followingCount;
+    }
+
+    function getProfileDateOfCreation(uint256 _profileId) external view returns (uint64 dateOfCreation) {
+
+        Profile memory profile = profiles[_profileId];
+        dateOfCreation = profile.dateCreated;
+    }
+
+    function getProfileCreator(uint256 _profileId) external view returns (address creator) {
+
+        Profile memory profile = profiles[_profileId];
+        creator = profile.createdBy;
     }
 }
