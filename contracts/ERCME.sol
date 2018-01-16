@@ -130,6 +130,7 @@ contract ERCME is MyNonFungibleToken {
 
     function editMetadata(string metaKey, string metaValue, uint256 profileId, string namespace) external {
         require(_owns(msg.sender, profileId));
+        require(validateMetadataKey(namespace + ":" + metaKey));
         // The code below works for both editing an existing key/value pair
         // and for creating a new pair as well
         // namespace is the app from which this metadata comes from. Ex: Social Dapp
@@ -137,26 +138,40 @@ contract ERCME is MyNonFungibleToken {
         // metaKey is the key (a string) we will be looking up. Ex: website
         //metaValue is the value that search will return. Ex: https://ghiliweld.github.io
         // profiles[profileId].metadata["Social Dapp:website"] = "https://ghiliweld.github.io"
-        profiles[profileId].metadata[namespace + ":" + metaKey] = metaValue;
+        profiles[profileId].metadata[(namespace + ":" + metaKey).trim()] = metaValue;
     }
     // editGlobalMetadata and removeGlobalMetadata are subject to removal
     /* I'm deciding between makings seperate functions for global metadata or
     making global a standard the in the docs specification unless the Dapp needs to be specified.*/
     function editGlobalMetadata(string metaKey, string metaValue, uint256 profileId) external {
         require(_owns(msg.sender, profileId));
-        profiles[profileId].metadata["global:" + metaKey] = metaValue;
+        require(validateMetadataKey("global:" + metaKey));
+
+        profiles[profileId].metadata[("global:" + metaKey).trim()] = metaValue;
     }
 
     function removeMetadata(string metaKey, uint256 profileId, string namespace) external {
         require(_owns(msg.sender, profileId));
+        require(validateMetadataKey(namespace + ":" + metaKey));
         // The code below will delete a key/value pair from the metadata mapping
-        delete profiles[profileId].metadata[namespace + ":" + metaKey];
+        delete profiles[profileId].metadata[(namespace + ":" + metaKey).trim()];
         // ^^ ** Does delete work like this?
     }
 
     function removeGlobalMetadata(string metaKey, uint256 profileId) external {
         require(_owns(msg.sender, profileId));
-        delete profiles[profileId].metadata["global:" + metaKey];
+        require(validateMetadataKey("global:" + metaKey));
+        delete profiles[profileId].metadata[("global:" + metaKey).trim()];
     }
 
+    function validateMetadataKey(string metaKey) internal {
+        // validates that the metaKey matches the following conditions:
+        // - allow letters (lowercase and uppercase) and digits
+        // - allow dashes, underscores, and periods
+        // - there has to be a colon (:) between the namespace and the key
+        // - both namespace and key have to be at least 1 character in length
+        // To confirm: do regex's work with Solidity? Can't find documentation about this,
+        // but it works in JS.
+        return (/([0-9a-z-A-Z_\-\.]{1,}:[0-9a-z-A-Z_\-\.]{1,})/g).test(metaKey.trim());
+    }
 }
