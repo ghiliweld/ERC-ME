@@ -13,7 +13,7 @@ contract MyNonFungibleToken is ERC721 {
         string name; // Must be unique
         string handle; // Must be unique
         string bio;
-        string key; // stores a public key for our profile, still looking into it
+        string publicKey; // stores a public key for our profile, still looking into it
         mapping (string => string) public metadata;
         uint32 followerCount;
         uint32 followingCount;
@@ -133,7 +133,7 @@ contract MyNonFungibleToken is ERC721 {
         return result;
     }
 
-    function getProfile(uint256 _profileId) external view returns (string name, string handle, string bio, string key,
+    function getProfile(uint256 _profileId) external view returns (string name, string handle, string bio, string publiKey,
         mapping metadata, uint32 followerCount, uint32 followingCount, uint[] followers,
         uint[] following, address createdBy, uint64 dateCreated) {
         // ^^ ** Is that how you return a mapping type?
@@ -142,7 +142,7 @@ contract MyNonFungibleToken is ERC721 {
         name = profile.name;
         handle = profile.handle;
         bio = profile.bio;
-        key = profile.key
+        publicKey = profile.publicKey
         metadata = profile.metadata;
         followerCount = profile.followerCount;
         followingCount = profile.followingCount;
@@ -187,10 +187,10 @@ contract MyNonFungibleToken is ERC721 {
         metaValue = profile.metadata[namespace + ":" + metaKey];
     }
 
-    function getProfileKey(uint256 _profileId) external view returns (string key) {
+    function getProfilePublicKey(uint256 _profileId) external view returns (string publicKey) {
 
         Profile memory profile = profiles[_profileId];
-        key = profile.key;
+        publicKey = profile.publicKey;
     }
 
     function getProfileFollowers(uint256 _profileId) external view returns (uint[] followers) {

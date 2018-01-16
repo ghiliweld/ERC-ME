@@ -123,9 +123,9 @@ contract ERCME is MyNonFungibleToken {
         profiles[profileId].bio = newBio;
     }
 
-    function changeKey(string newKey, uint256 profileId) external {
+    function changeKey(string newPublicKey, uint256 profileId) external {
         require(_owns(msg.sender, profileId));
-        profiles[profileId].key = newKey;
+        profiles[profileId].publicKey = newPublicKey;
     }
 
     function editMetadata(string metaKey, string metaValue, uint256 profileId, string namespace) external {
