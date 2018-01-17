@@ -30,3 +30,6 @@ Ghilia Weldesselasie -- <a href='mailto:ghiliaweld@gmail.com'>ghiliaweld@gmail.c
 - At the moment I'm currently looking into adding more features like `bio` and `key`(public key) and `metadata` properties to our `Profile` struct.
 - `metadata` is lowkey a breakthrough. I hadn't considered storing string data in a mapping till @momothereal suggested it. I'm creating the functions for it right now.
 - All done for today. I think I'm finally close to future-proofing this contract.
+
+**17/01/2018**
+- I created a wiki for the project. Check it out [here](https://github.com/ghiliweld/ERC-ME/wiki).
