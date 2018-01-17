@@ -130,6 +130,7 @@ contract ERCME is MyNonFungibleToken {
 
     function editMetadata(string metaKey, string metaValue, uint256 profileId, string namespace) external {
         require(_owns(msg.sender, profileId));
+        require(metaKey != ""); // Makes sure metaKey isn't an empty string
         // The code below works for both editing an existing key/value pair
         // and for creating a new pair as well
         // namespace is the app from which this metadata comes from. Ex: Social Dapp
@@ -144,6 +145,7 @@ contract ERCME is MyNonFungibleToken {
     making global a standard the in the docs specification unless the Dapp needs to be specified.*/
     function editGlobalMetadata(string metaKey, string metaValue, uint256 profileId) external {
         require(_owns(msg.sender, profileId));
+        require(metaKey != ""); // Makes sure metaKey isn't an empty string
         profiles[profileId].metadata["global:" + metaKey] = metaValue;
     }
 
