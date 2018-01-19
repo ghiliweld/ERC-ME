@@ -30,7 +30,6 @@ Profile: {
 }
 
 profiles: public(Profile[]) # An array of profiles tied to a profileIds (array index). Is this how it's done?
-totalSupply = public(len(profiles))
 
 profileIndexToOwner: public(address[num256])
 ownershipProfileCount: public(num256[adress])
@@ -54,13 +53,13 @@ def ownerOf(_profileId: num256) -> (address):
     owner = profileIndexToOwner[_profileId]
     assert owner != address(0)
     return owner
-    
+
 # Return total supply of token.
 @public
 @constant
 def totalSupply() -> (num256):
 
-    return as_num256(totalSupply)
+    return as_num256(len(profiles))
 
 
 @private
@@ -145,7 +144,7 @@ def profilesOfOwner(_owner: address) -> (num256[]):
         return num256[0]
     else:
         result: num256[balance]
-        uint256 maxprofileId = totalSupply
+        uint256 maxprofileId = totalSupply()
         idx: num256 = 0
 
         profileId: num256
