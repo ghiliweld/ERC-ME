@@ -41,6 +41,8 @@ contract ERCME is MyNonFungibleToken {
     i.e. Will the createProfile function still run if ETH is not sent to it ? */
 
     function createProfile(string name, string handle) external payable {
+        require(name != ""); // No empty strings as names
+        require(handle != ""); // No empty strings as handles
         require(_checkUniqueName(name));
         require(_checkUniqueHandle(handle));
 
