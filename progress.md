@@ -35,4 +35,4 @@ Ghilia Weldesselasie -- <a href='mailto:ghiliaweld@gmail.com'>ghiliaweld@gmail.c
 - I created a wiki for the project. Check it out [here](https://github.com/ghiliweld/ERC-ME/wiki).
 
 **18/01/2018**
-- I recently decided to learn [Viper]() so to practice I'll be rewriting my contracts in Viper.
+- I recently decided to learn [Viper](https://vyper.readthedocs.io/en/latest/index.html) so to practice I'll be rewriting my contracts in Viper.
