@@ -9,6 +9,7 @@ contract ERCME is MyNonFungibleToken {
 
     address public constant CONTROLLER = 0xcfde; // The controller of the contract aka me ** must be changed
 
+    event ProfileDestroyed(address owner, uint256 profileId);
     event NewFollow(uint256 followingId, uint256 followedId);
     event NewUnfollow(uint256 unfollowingId, uint256 unfollowedId);
     event NameChange(uint256 profileId, string newName);
@@ -52,6 +53,13 @@ contract ERCME is MyNonFungibleToken {
 
         // Mint the profile
         _mint(msg.sender, name, handle);
+    }
+
+    function deleteProfile(uint256 profileId) external {
+        // Delete a profile you own
+        require(_owns(msg.sender, profileId));
+        delete profiles[profileId];
+        ProfileDestroyed(msg.sender, profileId);
     }
 
     function _newFollow(uint256 _initiatorId, uint256 _targetId) internal {

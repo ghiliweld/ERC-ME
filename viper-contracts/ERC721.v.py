@@ -18,9 +18,9 @@ allowed: num[address][address]
 Profile: {
     name: bytes, # Must be unique
     handle: bytes, # Must be unique
-    bio: bytes,
-    publicKey: bytes, # stores a public key for our profile, still looking into it
-    metadata: bytes[bytes],
+    bio: bytes32,
+    publicKey: bytes32, # stores a public key for our profile, still looking into it
+    metadata: bytes[bytes32],
     followerCount: num256,
     followingCount: num256,
     followers: num256[], # Tracks who is following this profile
@@ -157,8 +157,8 @@ def profilesOfOwner(_owner: address) -> (num256[]):
 
 @public
 @constant
-def getProfile(_profileId: num256) -> (name: bytes, handle: bytes, bio: bytes, publiKey: bytes,
-metadata: bytes, followerCount: num256, followingCount: num256, followers: num256[],
+def getProfile(_profileId: num256) -> (name: bytes, handle: bytes, bio: bytes32, publiKey: bytes,
+metadata: bytes[bytes32], followerCount: num256, followingCount: num256, followers: num256[],
 following num256[], createdBy: address, dateCreated: timestamp):
 
     profile: Profile = profiles[_profileId]
@@ -166,7 +166,7 @@ following num256[], createdBy: address, dateCreated: timestamp):
     handle: bytes = profile.handle
     bio: bytes = profile.bio
     publicKey: bytes = profile.publicKey
-    metadata: bytes[bytes] = profile.metadata
+    metadata: bytes[bytes32] = profile.metadata
     followerCount: num256 = profile.followerCount
     followingCount: num256 = profile.followingCount
     followers: num256[] = profile.followers
@@ -190,10 +190,10 @@ def getProfileHandle(_profileId: num256) -> (handle: bytes):
 
 @public
 @constant
-def getProfileBio(_profileId: num256) -> (bio: bytes):
+def getProfileBio(_profileId: num256) -> (bio: bytes32):
 
     profile: Profile = profiles[_profileId]
-    bio: bytes = profile.bio
+    bio: bytes32 = profile.bio
 
 @public
 @constant
