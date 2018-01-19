@@ -1,8 +1,5 @@
-# Viper Port of MyToken
+# Viper Port of ERC721.sol and MyNonFungibleToken.sol
 # THIS CONTRACT HAS NOT BEEN AUDITED!
-# ERC20 details at:
-# https://theethereum.wiki/w/index.php/ERC20_Token_Standard
-# https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
 
 
 # Events of the token.
