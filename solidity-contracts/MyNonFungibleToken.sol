@@ -142,7 +142,7 @@ contract MyNonFungibleToken is ERC721 {
         name = profile.name;
         handle = profile.handle;
         bio = profile.bio;
-        publicKey = profile.publicKey
+        publicKey = profile.publicKey;
         metadata = profile.metadata;
         followerCount = profile.followerCount;
         followingCount = profile.followingCount;

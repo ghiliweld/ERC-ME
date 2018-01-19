@@ -44,7 +44,7 @@ profileIndexToApproved: public(address[num256]) # Still don't know why approved 
 # What is the profile balance of a particular account?
 @public
 @constant
-def balanceOf(_owner: address) -> num256:
+def balanceOf(_owner: address) -> (num256):
 
     return as_num256(ownershipProfileCount[_owner])
 
@@ -52,7 +52,7 @@ def balanceOf(_owner: address) -> num256:
 # What profile is this address the owner of?
 @public
 @constant
-def ownerOf(_profileId: num256) -> adress:
+def ownerOf(_profileId: num256) -> (adress):
 
     owner = profileIndexToOwner[_profileId]
     return owner
@@ -62,20 +62,20 @@ def ownerOf(_profileId: num256) -> adress:
 # Return total supply of token.
 @public
 @constant
-def totalSupply() -> num256:
+def totalSupply() -> (num256):
 
     return as_num256(totalSupply)
 
 
 @private
 @constant
-def _owns(_claimant: address, _profileId: num256) -> bool:
+def _owns(_claimant: address, _profileId: num256) -> (bool):
 
     return (profileIndexToOwner[_profileId] == _claimant)
 
 @private
 @constant
-def _approvedFor(_claimant: address, _profileId: num256) -> bool:
+def _approvedFor(_claimant: address, _profileId: num256) -> (bool):
 
     return (profileIndexToApproved[_profileId] == _claimant)
 
@@ -141,7 +141,7 @@ def _mint(_creator: address, _name: bytes, _handle: bytes):
 
 @public
 @constant
-def profilesOfOwner(_owner: address) -> num256[]:
+def profilesOfOwner(_owner: address) -> (num256[]):
 
     balance: num256 = balanceOf(_owner)
 
@@ -149,7 +149,7 @@ def profilesOfOwner(_owner: address) -> num256[]:
         return num256[0]
     else:
         result: num256[balance]
-        uint256 maxprofileId = totalSupply()
+        uint256 maxprofileId = totalSupply
         idx: num256 = 0
 
         profileId: num256
@@ -159,3 +159,106 @@ def profilesOfOwner(_owner: address) -> num256[]:
                 idx += 1
 
     return result
+
+@public
+@constant
+def getProfile(_profileId: num256) -> (name: bytes, handle: bytes, bio: bytes, publiKey: bytes,
+metadata: bytes, followerCount: num256, followingCount: num256, followers: num256[],
+following num256[], createdBy: address, dateCreated: timestamp):
+
+    profile: Profile = profiles[_profileId]
+    name: bytes = profile.name
+    handle: bytes = profile.handle
+    bio: bytes = profile.bio
+    publicKey: bytes = profile.publicKey
+    metadata: bytes[bytes] = profile.metadata
+    followerCount: num256 = profile.followerCount
+    followingCount: num256 = profile.followingCount
+    followers: num256[] = profile.followers
+    following: num256[] = profile.following
+    createdBy: adress = profile.createdBy
+    dateCreated: timestamp = profile.dateCreated
+
+@public
+@constant
+def getProfileName(_profileId: num256) -> (name: bytes):
+
+    profile: Profile = profiles[_profileId]
+    name: bytes = profile.name
+
+@public
+@constant
+def getProfileHandle(_profileId: num256) -> (handle: bytes):
+
+    profile: Profile = profiles[_profileId]
+    handle: bytes = profile.handle
+
+@public
+@constant
+def getProfileBio(_profileId: num256) -> (bio: bytes):
+
+    profile: Profile = profiles[_profileId]
+    bio: bytes = profile.bio
+
+@public
+@constant
+def getProfilePublicKey(_profileId: num256) -> (publiKey: bytes):
+
+    profile: Profile = profiles[_profileId]
+    publiKey: bytes = profile.publiKey
+
+@public
+@constant
+def getAllProfileMetadata(_profileId: num256) -> (metadata: bytes[bytes]):
+
+    profile: Profile = profiles[profileId]
+    metadata: bytes[bytes] = profile.metadata
+
+@public
+@constant
+def getSpecificProfileMetadata(_profileId: num256, _namespace: bytes, _metaKey: bytes ) -> (metaValue: bytes):
+
+    profile: Profile = profiles[_profileId]
+    metaValue: bytes = profile.metadata[_namespace + ":" + _metaKey]
+
+@public
+@constant
+def getProfileFollowerCount(_profileId: num256) -> (followerCount: num256):
+
+    profile: Profile = profiles[_profileId]
+    followerCount: num256 = profile.followerCount
+
+@public
+@constant
+def getProfileFollowers(_profileId: num256) -> (followers: num256[]):
+
+    profile: Profile = profiles[_profileId]
+    followers: num256[] = profile.followers
+
+@public
+@constant
+def getProfileFollowingCount(_profileId: num256) -> (followingCount: num256):
+
+    profile: Profile = profiles[_profileId]
+    followingCount: num256 = profile.followingCount
+
+@public
+@constant
+def getProfileFollowings(_profileId: num256) -> (following: num256[]):
+
+    profile: Profile = profiles[_profileId]
+    following: num256[] = profile.following
+
+@public
+@constant
+def getProfileCreator(_profileId: num256) -> (creator: address):
+
+    profile: Profile = profiles[_profileId]
+    creator: address = profile.createdBy
+
+@public
+@constant
+def getProfileDateOfCreation(_profileId: num256) -> (dateOfCreation: timestamp):
+
+    profile: Profile = profiles[_profileId]
+    dateOfCreation: timestamp = profile.dateCreated
