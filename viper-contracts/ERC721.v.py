@@ -6,8 +6,8 @@
 
 
 # Events of the token.
-Transfer: __log__({_from: indexed(address), _to: indexed(address), _value: num256})
-Approval: __log__({_owner: indexed(address), _spender: indexed(address), _value: num256})
+Transfer: __log__({_from: indexed(address), _to: indexed(address), _profileId: num256})
+Approval: __log__({_owner: indexed(address), _approved: indexed(address), _profileId: num256})
 NewProfile: __log__({_owner: indexed(address), _profileId: num256})
 
 
@@ -19,16 +19,16 @@ balances: num[address]
 allowed: num[address][address]
 
 Profile: {
-    name: string, # Must be unique
-    handle: string, # Must be unique
-    bio: string,
-    publicKey: string, # stores a public key for our profile, still looking into it
-    metadata: string[string],
+    name: bytes, # Must be unique
+    handle: bytes, # Must be unique
+    bio: bytes,
+    publicKey: bytes, # stores a public key for our profile, still looking into it
+    metadata: bytes[bytes],
     followerCount: num256,
     followingCount: num256,
     followers: num256[], # Tracks who is following this profile
     following: num256[], # Tracks who this profile is following
-    createdBy: adress,
+    createdBy: address,
     dateCreated: timestamp,
 }
 
@@ -67,52 +67,95 @@ def totalSupply() -> num256:
     return as_num256(totalSupply)
 
 
-# Send `_value` tokens to `_to` from your account
+@private
+@constant
+def _owns(_claimant: address, _profileId: num256) -> bool:
+
+    return (profileIndexToOwner[_profileId] == _claimant)
+
+@private
+@constant
+def _approvedFor(_claimant: address, _profileId: num256) -> bool:
+
+    return (profileIndexToApproved[_profileId] == _claimant)
+
+@private
+def _approve(_to: address, _profileId: num256):
+
+    profileIndexToApproved[_profileId] = _to
+    log.Approval(profileIndexToOwner[_profileId], profileIndexToApproved[_profileId], _profileId)
+
 @public
-def transfer(_to: address, _amount: num(num256)) -> bool:
+def approve(_to: address, _profileId: num256):
 
-    if self.balances[msg.sender] >= _amount and \
-       self.balances[_to] + _amount >= self.balances[_to]:
+    assert _owns(msg.sender, _profileId)
+    _approve(_to, _profileId)
 
-        self.balances[msg.sender] -= _amount  # Subtract from the sender
-        self.balances[_to] += _amount  # Add the same to the recipient
-        log.Transfer(msg.sender, _to, as_num256(_amount))  # log transfer event.
+# Send `_value` tokens to `_to` from your account
+@private
+def _transfer( _from: address, _to: address, _profileId: num256):
 
-        return True
-    else:
-        return False
+    ownershipProfileCount[_to] += 1
+    profileIndexToOwner[_profileId] = _to
+    if _from != address(0):
+        ownershipProfileCount[_from] -= 1
+        delete profileIndexToApproved[_profileId]
 
+    log.Transfer(_from, _to, _profileId)
+
+@public
+def transfer(_to: address, _profileId: num256):
+
+    assert _to != address(0)
+    assert _to != msg.sender
+    assert _owns(msg.sender, _profileId))
+
+    _transfer(msg.sender, _to, _profileId)
 
 # Transfer allowed tokens from a specific account to another.
 @public
-def transferFrom(_from: address, _to: address, _value: num(num256)) -> bool:
+def transferFrom(_to: address, _profileId: num256):
 
-    if _value <= self.allowed[_from][msg.sender] and \
-       _value <= self.balances[_from]:
+    assert _to != address(0)
+    assert _to != msg.sender
+    assert _approvedFor(msg.sender, _profileId)
+    assert _owns(msg.sender, _profileId))
 
-        self.balances[_from] -= _value  # decrease balance of from address.
-        self.allowed[_from][msg.sender] -= _value  # decrease allowance.
-        self.balances[_to] += _value  # incease balance of to address.
-        log.Transfer(_from, _to, as_num256(_value))  # log transfer event.
+    _transfer(msg.sender, _to, _profileId)
 
-        return True
+@private
+def _mint(_creator: address, _name: bytes, _handle: bytes):
+
+    profile: Profile
+    profile.name = _name
+    profile.handle = _handle
+    profile.followerCount = 0
+    profile.followingCount = 0
+    profile.createdBy = _creator
+    profile.dateCreated = block.timestamp
+
+    profileId: num = profiles.append(profile) - 1;
+
+    log.NewProfile(_creator, _profileId)
+    _transfer(0, _creator, profileId)
+
+@public
+@constant
+def profilesOfOwner(_owner: address) -> num256[]:
+
+    balance: num256 = balanceOf(_owner)
+
+    if balance == 0
+        return num256[0]
     else:
-        return False
+        result: num256[balance]
+        uint256 maxprofileId = totalSupply()
+        idx: num256 = 0
 
+        profileId: num256
+        for profileId in range(0, maxprofileId)
+            if profileIndexToOwner[profileId] == _owner:
+                result[idx] = profileId
+                idx += 1
 
-# Allow _spender to withdraw from your account, multiple times, up to the _value amount.
-# If this function is called again it overwrites the current allowance with _value.
-@public
-def approve(_spender: address, _amount: num(num256)) -> bool:
-
-    self.allowed[msg.sender][_spender] = _amount
-    log.Approval(msg.sender, _spender, as_num256(_amount))
-
-    return True
-
-
-# Get the allowence an address has to spend anothers' token.
-@public
-def allowance(_owner: address, _spender: address) -> num256:
-
-return as_num256(self.allowed[_owner][_spender])
+    return result
