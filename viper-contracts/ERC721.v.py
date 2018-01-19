@@ -52,10 +52,9 @@ def balanceOf(_owner: address) -> (num256):
 def ownerOf(_profileId: num256) -> (address):
 
     owner = profileIndexToOwner[_profileId]
+    assert owner != address(0)
     return owner
-    require(owner != address(0))
-
-
+    
 # Return total supply of token.
 @public
 @constant
