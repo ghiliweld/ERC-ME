@@ -49,7 +49,7 @@ def balanceOf(_owner: address) -> (num256):
 # What profile is this address the owner of?
 @public
 @constant
-def ownerOf(_profileId: num256) -> (adress):
+def ownerOf(_profileId: num256) -> (address):
 
     owner = profileIndexToOwner[_profileId]
     return owner
