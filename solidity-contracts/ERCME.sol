@@ -68,7 +68,7 @@ contract ERCME is MyNonFungibleToken {
         A following is added to the initiator and a follower is added to the target */
 
         require(_owns(msg.sender, _initiatorId));
-        require(_initiatorId == _targetId); // make sure we're not following ourselves
+        require(_initiatorId != _targetId); // make sure we're not following ourselves
         require(profiles[_initiatorId].following.indexOf(_targetId) < 0); // make sure we're not refollowing someone
         profiles[_initiatorId].following.push(_targetId);
         profiles[_targetId].followers.push(_initiatorId);
@@ -140,6 +140,7 @@ contract ERCME is MyNonFungibleToken {
 
     function editMetadata(string metaKey, string metaValue, uint256 profileId, string namespace) external {
         require(_owns(msg.sender, profileId));
+        require(namespace != ""); // Makes sure namespace isn't an empty string
         require(metaKey != ""); // Makes sure metaKey isn't an empty string
         // The code below works for both editing an existing key/value pair
         // and for creating a new pair as well

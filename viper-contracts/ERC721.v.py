@@ -157,15 +157,15 @@ def profilesOfOwner(_owner: address) -> (num256[]):
 
 @public
 @constant
-def getProfile(_profileId: num256) -> (name: bytes, handle: bytes, bio: bytes32, publiKey: bytes,
+def getProfile(_profileId: num256) -> (name: bytes, handle: bytes, bio: bytes32, publiKey: bytes32,
 metadata: bytes[bytes32], followerCount: num256, followingCount: num256, followers: num256[],
 following num256[], createdBy: address, dateCreated: timestamp):
 
     profile: Profile = profiles[_profileId]
     name: bytes = profile.name
     handle: bytes = profile.handle
-    bio: bytes = profile.bio
-    publicKey: bytes = profile.publicKey
+    bio: bytes32 = profile.bio
+    publicKey: bytes32 = profile.publicKey
     metadata: bytes[bytes32] = profile.metadata
     followerCount: num256 = profile.followerCount
     followingCount: num256 = profile.followingCount
@@ -197,10 +197,10 @@ def getProfileBio(_profileId: num256) -> (bio: bytes32):
 
 @public
 @constant
-def getProfilePublicKey(_profileId: num256) -> (publiKey: bytes):
+def getProfilePublicKey(_profileId: num256) -> (publiKey: bytes32):
 
     profile: Profile = profiles[_profileId]
-    publiKey: bytes = profile.publiKey
+    publiKey: bytes32 = profile.publiKey
 
 @public
 @constant
