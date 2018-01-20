@@ -38,4 +38,4 @@ Ghilia Weldesselasie -- <a href='mailto:ghiliaweld@gmail.com'>ghiliaweld@gmail.c
 - I recently decided to learn [Viper](https://vyper.readthedocs.io/en/latest/index.html) so to practice I'll be rewriting my contracts in Viper.
 
 **19/01/2018**
-- Aaaaand done! The contracts have been completely ported to Viper. I was able to remove `MyNonFungibleToken.v.py` since it wasn't necessary. Please keep in mind that I have not and I don't plan on learning Python formally and the Viper are almost non-existent so the code mostly likely isn't good and probably not even valid Python. That is all.
+- Aaaaand done! The contracts have been completely ported to Viper. I was able to remove `MyNonFungibleToken.v.py` since it wasn't necessary. Please keep in mind that I have not and I don't plan on learning Python formally and the Viper docs are almost non-existent so the code mostly likely isn't good and probably not even valid Python. That is all.
