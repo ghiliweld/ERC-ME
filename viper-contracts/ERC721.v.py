@@ -15,7 +15,7 @@ totalSupply: num
 balances: num[address]
 allowed: num[address][address]
 
-Profile: {
+Profile: public({
     name: bytes, # Must be unique
     handle: bytes, # Must be unique
     bio: bytes32,
@@ -27,7 +27,7 @@ Profile: {
     following: num256[], # Tracks who this profile is following
     createdBy: address,
     dateCreated: timestamp,
-}
+})
 
 profiles: public(Profile[]) # An array of profiles tied to a profileIds (array index). Is this how it's done?
 
@@ -204,10 +204,10 @@ def getProfilePublicKey(_profileId: num256) -> (publiKey: bytes32):
 
 @public
 @constant
-def getAllProfileMetadata(_profileId: num256) -> (metadata: bytes[bytes]):
+def getAllProfileMetadata(_profileId: num256) -> (metadata: bytes[bytes32]):
 
     profile: Profile = profiles[profileId]
-    metadata: bytes[bytes] = profile.metadata
+    metadata: bytes[bytes32] = profile.metadata
 
 @public
 @constant
